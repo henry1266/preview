@@ -49,6 +49,13 @@ function displaySamples(samples) {
     const samplesGrid = document.getElementById('samplesGrid');
     samplesGrid.innerHTML = '';
 
+    // 按照檔案名稱中的數字由大到小排序
+    samples.sort((a, b) => {
+        const numA = parseInt(a.filename.replace(/\D/g, '') || 0);
+        const numB = parseInt(b.filename.replace(/\D/g, '') || 0);
+        return numB - numA; // 降序排列（由大到小）
+    });
+
     samples.forEach(sample => {
         const card = document.createElement('div');
         card.className = 'sample-card';
@@ -253,41 +260,6 @@ function handleSearch() {
     
     currentPage = 1;
     displayTable();
-}
-
-function exportToCSV() {
-    if (!filteredData || filteredData.length === 0) {
-        alert('沒有資料可匯出');
-        return;
-    }
-    
-    const columns = Object.keys(filteredData[0]).filter(key => !key.startsWith('_'));
-    
-    // 建立CSV內容
-    let csvContent = columns.join(',') + '\n';
-    
-    filteredData.forEach(row => {
-        const values = columns.map(column => {
-            const value = row[column] || '';
-            // 處理包含逗號或引號的值
-            if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-                return '"' + value.replace(/"/g, '""') + '"';
-            }
-            return value;
-        });
-        csvContent += values.join(',') + '\n';
-    });
-    
-    // 下載檔案
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'data.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 function showLoading(show) {

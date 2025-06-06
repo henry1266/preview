@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -20,7 +21,7 @@ app.get('/', (req, res) => {
 app.get('/api/sample/:filename', (req, res) => {
   try {
     const filename = req.params.filename;
-    const samplePath = path.join('Z:\\雲端處方', filename);
+    const samplePath = path.join(process.env.CLOUD_PRESCRIPTION_PATH, filename);
     
     if (!fs.existsSync(samplePath)) {
       return res.status(404).json({ error: '找不到範例檔案' });
@@ -41,7 +42,7 @@ app.get('/api/sample/:filename', (req, res) => {
 // 取得範例檔案列表的API
 app.get('/api/samples', (req, res) => {
   try {
-    const samplesDir = 'Z:\\雲端處方';
+    const samplesDir = process.env.CLOUD_PRESCRIPTION_PATH;
     if (!fs.existsSync(samplesDir)) {
       return res.json({ samples: [] });
     }
