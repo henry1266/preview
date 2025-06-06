@@ -3,6 +3,9 @@ let filteredData = null;
 let currentPage = 1;
 const itemsPerPage = 50;
 
+// 字體大小控制
+let currentFontSize = 100; // 預設字體大小百分比
+
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
@@ -24,9 +27,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupEventListeners() {
     const searchInput = document.getElementById('searchInput');
+    const increaseFontBtn = document.getElementById('increaseFontBtn');
+    const decreaseFontBtn = document.getElementById('decreaseFontBtn');
 
     // 搜尋事件
     searchInput.addEventListener('input', handleSearch);
+    
+    // 字體大小調整事件
+    if (increaseFontBtn) {
+        increaseFontBtn.addEventListener('click', increaseFontSize);
+    }
+    
+    if (decreaseFontBtn) {
+        decreaseFontBtn.addEventListener('click', decreaseFontSize);
+    }
+}
+
+// 增加字體大小
+function increaseFontSize() {
+    if (currentFontSize < 200) { // 最大200%
+        currentFontSize += 10;
+        updateFontSize();
+    }
+}
+
+// 減少字體大小
+function decreaseFontSize() {
+    if (currentFontSize > 70) { // 最小70%
+        currentFontSize -= 10;
+        updateFontSize();
+    }
+}
+
+// 更新字體大小
+function updateFontSize() {
+    // 更新顯示
+    const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+    if (fontSizeDisplay) {
+        fontSizeDisplay.textContent = currentFontSize + '%';
+    }
+    
+    // 應用字體大小到表格和資訊區域
+    const tableWrapper = document.querySelector('.table-wrapper');
+    const infoGrid = document.getElementById('infoGrid');
+    const fontSize = currentFontSize / 100;
+    
+    if (tableWrapper) {
+        tableWrapper.style.fontSize = fontSize + 'rem';
+    }
+    
+    if (infoGrid) {
+        infoGrid.style.fontSize = fontSize + 'rem';
+    }
+    
+    // 保存到本地存儲，下次訪問時保持相同字體大小
+    localStorage.setItem('preferredFontSize', currentFontSize);
 }
 
 function loadSamples() {
@@ -294,4 +349,13 @@ function formatDate(dateString) {
         return dateString;
     }
 }
+
+// 頁面載入時檢查是否有保存的字體大小設定
+document.addEventListener('DOMContentLoaded', function() {
+    const savedFontSize = localStorage.getItem('preferredFontSize');
+    if (savedFontSize) {
+        currentFontSize = parseInt(savedFontSize);
+        updateFontSize();
+    }
+});
 
