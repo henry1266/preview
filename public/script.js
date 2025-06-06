@@ -67,17 +67,12 @@ function updateFontSize() {
         fontSizeDisplay.textContent = currentFontSize + '%';
     }
     
-    // 應用字體大小到表格和資訊區域
-    const tableWrapper = document.querySelector('.table-wrapper');
-    const infoGrid = document.getElementById('infoGrid');
+    // 只應用字體大小到表格內文（tbody）
+    const tableBody = document.getElementById('tableBody');
     const fontSize = currentFontSize / 100;
     
-    if (tableWrapper) {
-        tableWrapper.style.fontSize = fontSize + 'rem';
-    }
-    
-    if (infoGrid) {
-        infoGrid.style.fontSize = fontSize + 'rem';
+    if (tableBody) {
+        tableBody.style.fontSize = fontSize + 'rem';
     }
     
     // 保存到本地存儲，下次訪問時保持相同字體大小
@@ -234,6 +229,10 @@ function displayTable() {
         });
         tableBody.appendChild(tr);
     });
+    
+    // 套用當前字體大小設定到表格內文
+    const fontSize = currentFontSize / 100;
+    tableBody.style.fontSize = fontSize + 'rem';
     
     // 更新分頁
     updatePagination();

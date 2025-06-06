@@ -259,12 +259,14 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            font-size: 0.9rem; /* 固定表頭字體大小 */
         }
-
+        
         td {
             padding: 12px;
             border-bottom: 1px solid #dee2e6;
             vertical-align: top;
+            transition: font-size 0.3s ease; /* 平滑過渡字體大小變化 */
         }
 
         tr:hover {
@@ -396,6 +398,18 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .font-size-label {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
         }
         
         .font-size-btn {
@@ -480,6 +494,7 @@
     
     <!-- 字體大小調整控制項 -->
     <div class="font-size-controls">
+        <div class="font-size-label">表格內文大小</div>
         <button class="font-size-btn" id="increaseFontBtn">+</button>
         <div class="font-size-display" id="fontSizeDisplay">100%</div>
         <button class="font-size-btn" id="decreaseFontBtn">-</button>
