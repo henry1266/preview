@@ -129,6 +129,6 @@ MIT License
 
 ## 作者
 
-開發者：Manus AI Agent
 專案維護：henry1266
 
+12345
