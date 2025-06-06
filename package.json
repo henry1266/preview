@@ -7,7 +7,12 @@
     "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["json", "viewer", "table", "data"],
+  "keywords": [
+    "json",
+    "viewer",
+    "table",
+    "data"
+  ],
   "author": "",
   "license": "ISC",
   "description": "簡易的JSON瀏覽工具，將JSON資料以表格格式呈現",
@@ -17,4 +22,3 @@
     "multer": "^2.0.1"
   }
 }
-

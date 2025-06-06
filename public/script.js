@@ -6,82 +6,27 @@ const itemsPerPage = 50;
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
-    loadSamples();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileToLoad = urlParams.get('file');
+
+    if (fileToLoad) {
+        loadSample(fileToLoad);
+        // 載入特定檔案後，隱藏範例列表
+        const samplesSection = document.getElementById('samplesSection');
+        if (samplesSection) {
+            samplesSection.style.display = 'none';
+        }
+    } else {
+        loadSamples();
+    }
 });
 
 function setupEventListeners() {
-    const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.getElementById('uploadArea');
     const searchInput = document.getElementById('searchInput');
-
-    // 檔案選擇事件
-    fileInput.addEventListener('change', handleFileSelect);
-
-    // 拖拽事件
-    uploadArea.addEventListener('dragover', handleDragOver);
-    uploadArea.addEventListener('dragleave', handleDragLeave);
-    uploadArea.addEventListener('drop', handleDrop);
 
     // 搜尋事件
     searchInput.addEventListener('input', handleSearch);
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.currentTarget.classList.add('dragover');
-}
-
-function handleDragLeave(e) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('dragover');
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('dragover');
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        const file = files[0];
-        if (file.type === 'application/json' || file.name.endsWith('.json')) {
-            uploadFile(file);
-        } else {
-            showError('請選擇JSON檔案');
-        }
-    }
-}
-
-function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) {
-        uploadFile(file);
-    }
-}
-
-function uploadFile(file) {
-    const formData = new FormData();
-    formData.append('jsonFile', file);
-
-    showLoading(true);
-    hideError();
-
-    fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        showLoading(false);
-        if (data.success) {
-            displayData(data.data, data.filename);
-        } else {
-            showError(data.error || '檔案上傳失敗');
-        }
-    })
-    .catch(error => {
-        showLoading(false);
-        showError('上傳失敗: ' + error.message);
-    });
 }
 
 function loadSamples() {
@@ -108,10 +53,11 @@ function displaySamples(samples) {
         const card = document.createElement('div');
         card.className = 'sample-card';
         card.innerHTML = `
-            <div class="sample-name">${sample.name}</div>
-            <div class="sample-filename">${sample.filename}</div>
+            <div class="sample-name">${sample.name} - ${sample.filename.replace(/\D/g, '')}</div>
         `;
-        card.addEventListener('click', () => loadSample(sample.filename));
+        card.addEventListener('click', () => {
+            window.location.href = `/?file=${sample.filename}`;
+        });
         samplesGrid.appendChild(card);
     });
 }
@@ -158,23 +104,19 @@ function displayFileInfo(data, filename) {
     const infoGrid = document.getElementById('infoGrid');
     
     infoGrid.innerHTML = '';
-    
-    // 基本檔案資訊
-    addInfoItem(infoGrid, '檔案名稱', filename);
+
+    const fileNumber = filename.replace(/\D/g, '');
+    addInfoItem(infoGrid, '檔案編號', fileNumber);
     
     // 個人資訊
     if (data.personalInfo) {
         addInfoItem(infoGrid, '姓名', data.personalInfo.name || '未提供');
-        addInfoItem(infoGrid, '身分證號', data.personalInfo.idNumber || '未提供');
         addInfoItem(infoGrid, '出生日期', data.personalInfo.birthDate || '未提供');
     }
     
     // 元資料
     if (data.metadata) {
         addInfoItem(infoGrid, '資料筆數', data.metadata.dataCount || '未知');
-        addInfoItem(infoGrid, '擷取時間', formatDate(data.metadata.extractedAt) || '未提供');
-        addInfoItem(infoGrid, '資料來源', data.metadata.source?.title || '未提供');
-        addInfoItem(infoGrid, '版本', data.metadata.version || '未提供');
     }
     
     fileInfo.classList.remove('hidden');
@@ -361,6 +303,9 @@ function showError(message) {
     const error = document.getElementById('error');
     error.textContent = message;
     error.classList.remove('hidden');
+}
+function goBack() {
+    window.location.href = '/';
 }
 
 function hideError() {
